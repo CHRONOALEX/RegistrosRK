@@ -46,7 +46,8 @@
     padding:28px 16px 60px;
     -webkit-font-smoothing:antialiased;
   }
-  .app{width:100%;max-width:440px;}
+  .app{width:100%;max-width:440px;transition:max-width 0.25s ease;}
+  .app.expanded{max-width:1024px;}
 
   /* ---------- Header ---------- */
   .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding:0 2px;}
@@ -81,12 +82,13 @@
   #screen-onboard .headline{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
   #screen-onboard .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:18px;}
   label{display:block;font-size:12px;color:var(--ink-faint);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
-  input[type=text]{
-    width:100%;padding:13px 14px;border-radius:var(--radius-sm);
+  input[type=text], input[type=date]{
+    padding:13px 14px;border-radius:var(--radius-sm);
     border:1px solid var(--carbon-line);background:var(--carbon-900);
-    color:var(--ink);font-size:15px;font-family:var(--font-body);outline:none;
+    color:var(--ink);font-size:14px;font-family:var(--font-body);outline:none;
   }
-  input[type=text]:focus{border-color:var(--guindo-light);box-shadow:0 0 0 3px rgba(163,52,84,.18);}
+  input[type=text]:focus, input[type=date]:focus{border-color:var(--guindo-light);box-shadow:0 0 0 3px rgba(163,52,84,.18);}
+  input[type=text]{width:100%;}
   .email-pill{
     display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--radius-sm);
     background:var(--carbon-900);border:1px solid var(--carbon-line);margin-bottom:18px;
@@ -94,14 +96,14 @@
   .email-pill img{width:26px;height:26px;border-radius:50%;}
   .email-pill span{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);word-break:break-all;}
   .btn{
-    width:100%;padding:14px;border-radius:var(--radius-sm);border:none;
+    padding:14px;border-radius:var(--radius-sm);border:none;
     font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:.2px;
     cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
   }
   .btn:active{transform:scale(.98);}
-  .btn-primary{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -10px var(--guindo-glow);}
-  .btn-primary:disabled{opacity:.45;cursor:not-allowed;}
-  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--carbon-line);margin-top:10px;}
+  .btn-primary{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -10px var(--guindo-glow);width:100%;}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--carbon-line);margin-top:10px;width:100%;}
 
   /* ---------- Main screen ---------- */
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
@@ -172,23 +174,57 @@
   .toast.ok{border-color:var(--ok);}
   .toast.bad{border-color:var(--err);}
 
-  /* ---------- Admin ---------- */
+  /* ---------- Admin Matrix ---------- */
   #screen-admin .headline{font-family:var(--font-display);font-weight:800;font-size:18px;margin:0 0 16px;display:flex;align-items:center;justify-content:space-between;}
-  .filters{display:flex;gap:8px;margin-bottom:16px;}
-  .filters input{flex:1;font-size:13px;padding:10px 12px;}
+  .admin-grid{display:grid;grid-template-columns:300px 1fr;gap:20px;}
+  @media(max-width:850px){ .admin-grid{grid-template-columns:1fr;}}
+  .admin-sidebar{display:flex;flex-direction:column;gap:16px;}
+  .panel-section{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:14px;}
+  .panel-section h4{margin:0 0 10px;font-family:var(--font-display);font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.5px;}
+  
+  .filters{display:flex;flex-direction:column;gap:10px;}
+  .filters input[type=text]{width:100%;}
+  .date-range-container{display:flex;gap:6px;align-items:center;}
+  .date-range-container input{width:100%;background:var(--carbon-800);border-color:var(--carbon-line);}
+  
+  .user-select-list{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-top:6px;padding-right:2px;}
+  .user-select-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px;border-radius:6px;cursor:pointer;background:var(--carbon-800);}
+  .user-select-item:hover{background:var(--carbon-600);}
+  .user-select-item input{margin:0;}
+
+  /* Real-time rows UI with micro-leds */
+  .rt-separator{background:var(--carbon-600);color:var(--ink-faint);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 8px;border-radius:4px;margin:12px 0 6px;}
+  .tr-active{background:rgba(79,156,114,0.08) !important;}
+  .tr-active:hover{background:rgba(79,156,114,0.14) !important;}
+  .led{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;}
+  .led.on{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+  .led.off{background:#555;}
+
+  /* Stats and KPI Widget */
+  .kpi-row{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px;}
+  .kpi-card{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:12px;text-align:center;}
+  .kpi-card .val{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--ok);}
+  .kpi-card .lbl{font-size:10.5px;color:var(--ink-faint);margin-top:2px;text-transform:uppercase;}
+
+  /* Chart Layout */
+  .chart-container{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;}
+  .chart-svg{width:100%;height:140px;margin-top:10px;overflow:visible;}
+  .chart-bar{fill:var(--guindo-light);transition:height 0.3s, y 0.3s;cursor:pointer;}
+  .chart-bar:hover{fill:var(--guindo);}
+  .chart-axis{stroke:var(--carbon-line);stroke-width:1;}
+  .chart-text{fill:var(--ink-dim);font-size:9px;font-family:var(--font-mono);text-anchor:middle;}
+
   table{width:100%;border-collapse:collapse;font-size:12px;}
   th{text-align:left;color:var(--ink-faint);font-weight:600;text-transform:uppercase;font-size:9.5px;letter-spacing:.4px;padding:0 6px 8px;}
-  td{padding:9px 6px;border-top:1px solid var(--carbon-line);font-family:var(--font-mono);}
-  td.res-ok{color:var(--ok);}
-  td.res-bad{color:var(--err);}
-  .table-wrap{max-height:420px;overflow:auto;margin:-4px -4px 0;}
-  .back-link{display:flex;align-items:center;gap:6px;color:var(--ink-dim);font-size:13px;margin-bottom:16px;cursor:pointer;}
+  td{padding:9px 6px;border-top:1px solid var(--carbon-line);font-family:var(--font-mono);color:var(--ink-dim);}
+  .table-wrap{max-height:340px;overflow:auto;border:1px solid var(--carbon-line);border-radius:var(--radius-sm);background:var(--carbon-900);}
+  .back-link{display:flex;align-items:center;gap:6px;color:var(--ink-dim);font-size:13px;margin-bottom:16px;cursor:pointer;width:fit-content;}
 
   .foot-note{font-size:10.5px;color:var(--ink-faint);text-align:center;margin-top:18px;line-height:1.6;}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app-container">
 
   <div class="brand">
     <div class="brand-mark">
@@ -196,23 +232,23 @@
     </div>
     <div class="brand-text">
       <div class="t1">Control de Horarios</div>
-      <div class="t2">REDPACK · ENTRADA / SALIDA</div>
+      <div class="t2">REDPACK · OPERACIONES EN TIEMPO REAL</div>
     </div>
   </div>
 
   <!-- ===================== LOGIN ===================== -->
   <div id="screen-login" class="card">
     <div class="headline">Registra tu asistencia</div>
-    <div class="sub">Inicia sesión con tu cuenta de Gmail para checar tu entrada o salida de turno. Tu correo queda validado automáticamente, no se puede escribir a mano.</div>
+    <div class="sub">Inicia sesión con tu cuenta de Gmail para checar tu entrada o salida de turno. Tu correo queda validado automáticamente.</div>
     <div class="g-wrap"><div id="gsi-button"></div></div>
     <div class="login-hint">Solo correos previamente autorizados por un administrador podrán checar.</div>
     <div id="login-status" class="login-status"></div>
   </div>
 
-  <!-- ===================== ONBOARDING (nombre) ===================== -->
+  <!-- ===================== ONBOARDING ===================== -->
   <div id="screen-onboard" class="card hidden">
     <div class="headline">Confirma tu nombre</div>
-    <div class="sub">Este nombre es el que verán los administradores en los registros. Tu Gmail ya quedó verificado.</div>
+    <div class="sub">Este nombre es el que verán los administradores en los registros activos.</div>
     <div class="email-pill"><img id="ob-avatar" src="" alt=""><span id="ob-email"></span></div>
     <label for="ob-name">Nombre completo</label>
     <input type="text" id="ob-name" placeholder="Ej. Juan Pérez">
@@ -268,21 +304,72 @@
       <div id="feed-list"><div class="empty">Aún no tienes registros hoy.</div></div>
     </div>
 
-    <div class="foot-note">La ubicación se valida en el servidor al momento de checar. Los intentos fuera del radio permitido o con GPS poco confiable quedan marcados como rechazados.</div>
+    <div class="foot-note">La ubicación se valida en el servidor. Los intentos fuera del radio permitido o repetidos antes de 1 hora serán bloqueados automáticamente.</div>
   </div>
 
-  <!-- ===================== ADMIN ===================== -->
+  <!-- ===================== ADMIN PANEL (EXTENDED UI) ===================== -->
   <div id="screen-admin" class="card hidden">
-    <div class="back-link" id="admin-back">← Volver</div>
-    <div class="headline">Registros<span id="admin-count" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);"></span></div>
-    <div class="filters">
-      <input type="text" id="admin-search" placeholder="Buscar por nombre o correo…">
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Nombre</th><th>Tipo</th><th>Hora</th><th>Dist.</th><th>Resultado</th></tr></thead>
-        <tbody id="admin-tbody"></tbody>
-      </table>
+    <div class="back-link" id="admin-back">← Volver al Panel Personal</div>
+    <div class="headline">Consola de Control de Operaciones <span id="admin-count" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);"></span></div>
+    
+    <div class="admin-grid">
+      <!-- Sidebar de Controles y Filtros -->
+      <div class="admin-sidebar">
+        <div class="panel-section">
+          <h4>Filtros de Búsqueda</h4>
+          <div class="filters">
+            <input type="text" id="admin-search" placeholder="Buscar operador o correo…">
+            <div class="date-range-container">
+              <input type="date" id="admin-date-start" title="Fecha Inicial">
+              <span style="font-size:11px;color:var(--ink-faint)">a</span>
+              <input type="date" id="admin-date-end" title="Fecha Final">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h4>Filtrado de Operadores Gráfica</h4>
+          <div style="font-size:11px; color:var(--ink-faint); margin-bottom:6px;">Selecciona para incluir en estadísticas corporativas:</div>
+          <div class="user-select-list" id="admin-user-checkboxes">
+            <!-- Dinámico -->
+          </div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="val" id="kpi-avg-time">0.0h</div>
+            <div class="lbl">Tiempo Promedio / Turno</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Principal Analítico y Monitoreo Real-Time -->
+      <div class="admin-main-panel">
+        <div class="chart-container">
+          <h4>Horas Laboradas Reales (Periodo Seleccionado)</h4>
+          <svg class="chart-svg" id="analytics-chart" viewBox="0 0 400 140" preserveAspectRatio="none">
+            <!-- Ejes y barras generadas dinámicamente -->
+          </svg>
+        </div>
+
+        <h4>Estatus y Registro Operativo de Usuarios</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Operador</th>
+                <th>Rol</th>
+                <th>Último Check</th>
+                <th>Hora</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody id="admin-tbody">
+              <!-- Registros dinámicos divididos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -291,9 +378,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* =====================================================================
-   CONFIGURACIÓN — edita estos 2 valores antes de publicar la app
-   ===================================================================== */
 const CONFIG = {
   GOOGLE_CLIENT_ID: "972622378238-r9c9jse3rp3c3isf68dq8u08gv5c3u7s.apps.googleusercontent.com",
   APPS_SCRIPT_URL:  "https://script.google.com/macros/s/AKfycbwwA2GZZISetV06LjNPyIK2ClOvZ0ASpBdS17Ym_4fU6gK-BkERk5iQqzUmXL4xbcdpEg/exec",
@@ -302,22 +386,33 @@ const CONFIG = {
   RADIUS_M: 50,
   MAX_ACCURACY_M: 60
 };
-/* ===================================================================== */
 
 let session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
 let lastFix = null;
 let currentFix = null;
 let watchId = null;
 let todayFeed = [];
+let adminRows = []; 
+let selectedUsersForChart = new Set(); 
 
 const $ = (id) => document.getElementById(id);
-const show = (id) => { ['screen-login','screen-onboard','screen-main','screen-admin'].forEach(s=>$(s).classList.add('hidden')); $(id).classList.remove('hidden'); };
+
+const show = (id) => { 
+  ['screen-login','screen-onboard','screen-main','screen-admin'].forEach(s=>$(s).classList.add('hidden')); 
+  $(id).classList.remove('hidden');
+  if(id === 'screen-admin') {
+    $('app-container').classList.add('expanded');
+  } else {
+    $('app-container').classList.remove('expanded');
+  }
+};
+
 function toast(msg, kind){
   const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + (kind||'');
   clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-/* ---------------- Google Identity Services ---------------- */
+/* ---------------- Reloj Operativo ---------------- */
 window.onload = () => {
   google.accounts.id.initialize({
     client_id: CONFIG.GOOGLE_CLIENT_ID,
@@ -327,6 +422,7 @@ window.onload = () => {
   google.accounts.id.renderButton($('gsi-button'), { theme:'filled_black', size:'large', shape:'pill', text:'signin_with', width:280 });
   tickClock();
   setInterval(tickClock, 1000);
+  initAdminDateRange();
 };
 
 function decodeJwt(token){
@@ -343,7 +439,6 @@ function onGoogleCredential(resp){
   session.picture = payload.picture || '';
   $('login-status').textContent = 'Verificando…';
 
-  // El servidor vuelve a verificar el token y decide si el usuario existe / está activo / es admin
   callApi('login', { nombre: session.name }).then(res=>{
     if (!res.ok){ toast(res.error || 'No se pudo iniciar sesión.', 'bad'); $('login-status').textContent = res.error || ''; return; }
     session.rol = res.rol;
@@ -366,6 +461,7 @@ $('ob-continue').onclick = () => {
 };
 $('ob-logout').onclick = doLogout;
 $('btn-logout').onclick = doLogout;
+
 function doLogout(){
   google.accounts.id.disableAutoSelect();
   if (watchId) navigator.geolocation.clearWatch(watchId);
@@ -373,7 +469,6 @@ function doLogout(){
   show('screen-login');
 }
 
-/* ---------------- Pantalla principal ---------------- */
 function enterMain(){
   $('m-avatar').src = session.picture;
   $('m-name').textContent = session.name;
@@ -392,7 +487,7 @@ function tickClock(){
   $('date-label').textContent = d.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
 }
 
-/* ---------------- Geolocalización + geocerca ---------------- */
+/* ---------------- Geolocalización / Geocerca ---------------- */
 function haversine(lat1,lon1,lat2,lon2){
   const R=6371000, toRad = d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
@@ -415,13 +510,12 @@ function onGeo(pos){
   const c = pos.coords;
   const fix = { lat:c.latitude, lng:c.longitude, accuracy:c.accuracy, t:Date.now() };
 
-  // Heurística anti "salto de ubicación" (fake GPS / teleport)
   let sospechoso = null;
   if (lastFix){
     const dt = (fix.t - lastFix.t)/1000;
     const dd = haversine(lastFix.lat, lastFix.lng, fix.lat, fix.lng);
     if (dt > 0.4 && dt < 20){
-      const speed = dd/dt; // m/s
+      const speed = dd/dt;
       if (speed > 55) sospechoso = 'salto de ubicación implausible';
     }
   }
@@ -454,9 +548,22 @@ function setDot(state){
   dot.className = 'radar-dot ' + (state==='ok'?'ok':state==='bad'?'bad':'');
 }
 
-/* ---------------- Marcar entrada / salida ---------------- */
-$('btn-entrada').onclick = () => marcar('Entrada');
-$('btn-salida').onclick = () => marcar('Salida');
+/* ---------------- Restricción Operativa (1 hora) y Envío ---------------- */
+function checkLockout(tipo) {
+  const lastCheckTime = localStorage.getItem(`last_success_check_${session.email}`);
+  if (lastCheckTime) {
+    const diff = Date.now() - parseInt(lastCheckTime, 10);
+    if (diff < 3600000) { 
+      const minsLeft = Math.ceil((3600000 - diff) / 60000);
+      toast(`Bloqueo de seguridad: No puedes volver a registrar por al menos ${minsLeft} min de diferencia.`, 'bad');
+      return true;
+    }
+  }
+  return false;
+}
+
+$('btn-entrada').onclick = () => { if(!checkLockout('Entrada')) marcar('Entrada'); };
+$('btn-salida').onclick = () => { if(!checkLockout('Salida')) marcar('Salida'); };
 
 function marcar(tipo){
   if (!currentFix){ toast('Esperando ubicación…', 'bad'); return; }
@@ -470,7 +577,8 @@ function marcar(tipo){
   }).then(res=>{
     $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
     if (res.ok){
-      toast(tipo + ' registrada · ' + res.distancia + 'm del punto', 'ok');
+      toast(tipo + ' registrada con éxito · ' + res.distancia + 'm del punto', 'ok');
+      localStorage.setItem(`last_success_check_${session.email}`, Date.now().toString());
     } else {
       toast(res.motivo || res.error || 'Registro rechazado', 'bad');
     }
@@ -494,42 +602,250 @@ function addFeedItem(tipo, ok, motivo){
     </div>`).join('');
 }
 
-/* ---------------- Panel admin ---------------- */
+/* ---------------- Consola Administrativa Avanzada ---------------- */
+function initAdminDateRange(){
+  const today = new Date();
+  const past6Days = new Date();
+  past6Days.setDate(today.getDate() - 6);
+  
+  $('admin-date-end').value = today.toISOString().split('T')[0];
+  $('admin-date-start').value = past6Days.toISOString().split('T')[0];
+
+  $('admin-date-start').onchange = () => filterAndProcessAdminData();
+  $('admin-date-end').onchange = () => filterAndProcessAdminData();
+}
+
 function openAdmin(){
   show('screen-admin');
-  $('admin-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Cargando…</td></tr>';
+  $('admin-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sincronizando flujo de datos en tiempo real…</td></tr>';
   callApi('listado', {}).then(res=>{
-    if (!res.ok){ toast(res.error||'Sin permisos', 'bad'); show('screen-main'); return; }
-    renderAdminTable(res.registros || []);
+    if (!res.ok){ toast(res.error||'Sin permisos asignados', 'bad'); show('screen-main'); return; }
+    
+    adminRows = res.registros || [];
+    
+    // Identificar todos los usuarios únicos para la lista de selección por defecto
+    const uniqueUsers = [...new Set(adminRows.map(r => r.Nombre || r.Correo))].filter(Boolean);
+    selectedUsersForChart = new Set(uniqueUsers); 
+    
+    renderUserCheckboxes(uniqueUsers);
+    filterAndProcessAdminData();
   });
 }
-let adminRows = [];
-function renderAdminTable(rows){
-  adminRows = rows;
-  $('admin-count').textContent = ' · ' + rows.length;
-  paintAdminTable(rows);
-}
-function paintAdminTable(rows){
-  $('admin-tbody').innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.Nombre || ''}</td>
-      <td>${r.Tipo || ''}</td>
-      <td>${new Date(r.Timestamp).toLocaleTimeString('es-MX',{hour12:false})}</td>
-      <td>${r.Distancia_m || ''}m</td>
-      <td class="${r.Resultado==='Aceptado'?'res-ok':'res-bad'}">${r.Resultado || ''}</td>
-    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sin registros</td></tr>';
-}
-$('admin-search').oninput = (e) => {
-  const q = e.target.value.toLowerCase();
-  paintAdminTable(adminRows.filter(r => (r.Nombre||'').toLowerCase().includes(q) || (r.Correo||'').toLowerCase().includes(q)));
-};
 
-/* ---------------- Comunicación con Apps Script ---------------- */
+function renderUserCheckboxes(users) {
+  const container = $('admin-user-checkboxes');
+  if(!users.length) { container.innerHTML = '<div style="color:var(--ink-faint); font-size:11px;">No hay usuarios</div>'; return;}
+  
+  container.innerHTML = users.map(u => `
+    <label class="user-select-item">
+      <input type="checkbox" value="${u}" checked onchange="toggleUserChartSelection('${u}', this.checked)">
+      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${u}</span>
+    </label>
+  `).join('');
+}
+
+function toggleUserChartSelection(user, isChecked) {
+  if(isChecked) selectedUsersForChart.add(user);
+  else selectedUsersForChart.delete(user);
+  calculateStatsAndRenderChart();
+}
+
+function filterAndProcessAdminData() {
+  const q = $('admin-search').value.toLowerCase();
+  const startDate = new Date($('admin-date-start').value + 'T00:00:00');
+  const endDate = new Date($('admin-date-end').value + 'T23:59:59');
+
+  // Filtrado general por rango de fechas del calendario y query
+  let filtered = adminRows.filter(r => {
+    const rDate = new Date(r.Timestamp);
+    const matchesDate = rDate >= startDate && rDate <= endDate;
+    const matchesQuery = (r.Nombre||'').toLowerCase().includes(q) || (r.Correo||'').toLowerCase().includes(q);
+    return matchesDate && matchesQuery;
+  });
+
+  $('admin-count').textContent = ' · ' + filtered.length + ' en rango';
+
+  // Obtener estado en tiempo real (basado en el último estado histórico de cada usuario en el sistema)
+  const usersStatusMap = {};
+  
+  // Ordenar cronológicamente para determinar el estatus real más reciente
+  const sortedChronological = [...adminRows].sort((a,b) => new Date(a.Timestamp) - new Date(b.Timestamp));
+  
+  sortedChronological.forEach(r => {
+    const uid = r.Correo || r.Nombre;
+    if(r.Resultado === 'Aceptado') {
+      usersStatusMap[uid] = {
+        name: r.Nombre || r.Correo,
+        rol: r.Rol || 'empleado',
+        tipo: r.Tipo,
+        timestamp: r.Timestamp,
+        resultado: r.Resultado
+      };
+    }
+  });
+
+  // Dividir e imprimir la tabla estructurada: Administradores arriba, colaboradores abajo
+  const adminUsersHTML = [];
+  const normalUsersHTML = [];
+
+  for(let id in usersStatusMap) {
+    const user = usersStatusMap[id];
+    const isEnTurno = user.tipo === 'Entrada';
+    const ledClass = isEnTurno ? 'led on' : 'led off';
+    const rowClass = isEnTurno ? 'tr-active' : '';
+
+    const htmlString = `
+      <tr class="${rowClass}">
+        <td><span class="${ledClass}"></span>${user.name}</td>
+        <td>${user.rol === 'admin' ? 'Administrador' : 'Colaborador'}</td>
+        <td>${user.tipo || 'Ninguno'}</td>
+        <td>${new Date(user.timestamp).toLocaleTimeString('es-MX',{hour12:false})}</td>
+        <td style="color:${isEnTurno ? 'var(--ok)': 'var(--ink-faint)'}">${isEnTurno ? 'Operando' : 'Fuera de turno'}</td>
+      </tr>
+    `;
+
+    if(user.rol === 'admin') adminUsersHTML.push(htmlString);
+    else normalUsersHTML.push(htmlString);
+  }
+
+  let finalTableHTML = '';
+  if(adminUsersHTML.length > 0) {
+    finalTableHTML += adminUsersHTML.join('');
+  }
+  if(normalUsersHTML.length > 0) {
+    finalTableHTML += `<tr><td colspan="5" class="rt-separator">Personal Operativo / Colaboradores</td></tr>`;
+    finalTableHTML += normalUsersHTML.join('');
+  }
+  
+  $('admin-tbody').innerHTML = finalTableHTML || '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sin registros de operaciones activas en este rango.</td></tr>';
+
+  calculateStatsAndRenderChart();
+}
+
+$('admin-search').oninput = () => filterAndProcessAdminData();
+
+/* ---------------- Análisis Avanzado de Turnos y Gráfica SVG Nativa ---------------- */
+function calculateStatsAndRenderChart() {
+  const startDateStr = $('admin-date-start').value;
+  const endDateStr = $('admin-date-end').value;
+  
+  const start = new Date(startDateStr + 'T00:00:00');
+  const end = new Date(endDateStr + 'T23:59:59');
+
+  // Generar mapeo de los días solicitados en el rango interactivo
+  const daysMap = {};
+  let currentLoopDate = new Date(start);
+  while(currentLoopDate <= end) {
+    const dateKey = currentLoopDate.toISOString().split('T')[0];
+    daysMap[dateKey] = { totalHours: 0, shiftCount: 0 };
+    currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+  }
+
+  // Agrupar marcas aceptadas por usuario y por orden cronológico
+  const validRecords = adminRows.filter(r => r.Resultado === 'Aceptado' && selectedUsersForChart.has(r.Nombre || r.Correo));
+  const userShifts = {};
+
+  validRecords.sort((a,b) => new Date(a.Timestamp) - new Date(b.Timestamp)).forEach(r => {
+    const uid = r.Correo || r.Nombre;
+    if(!userShifts[uid]) userShifts[uid] = [];
+    userShifts[uid].push(r);
+  });
+
+  let totalAggregatedHours = 0;
+  let totalValidShifts = 0;
+
+  // Analizar parámetros lógicos para turnos cruzados (día siguiente) y omitir olvidos de salida
+  for (let uid in userShifts) {
+    const records = userShifts[uid];
+    for (let i = 0; i < records.length; i++) {
+      if (records[i].Tipo === 'Entrada') {
+        // Buscar su salida correspondiente
+        let nextRecord = records[i+1];
+        
+        if (nextRecord && nextRecord.Tipo === 'Salida') {
+          const tIn = new Date(records[i].Timestamp);
+          const tOut = new Date(nextRecord.Timestamp);
+          const durationHours = (tOut - tIn) / 3600000;
+
+          // Parámetro de validación: si el turno supera las 18 horas, asumimos olvido de chequeo de salida y no se contabiliza
+          if (durationHours > 0 && durationHours <= 18) {
+            const dateKey = records[i].Timestamp.split('T')[0];
+            if (daysMap[dateKey] !== undefined) {
+              daysMap[dateKey].totalHours += durationHours;
+              daysMap[dateKey].shiftCount++;
+            }
+            totalAggregatedHours += durationHours;
+            totalValidShifts++;
+          }
+          i++; // Brincar el registro de salida procesado
+        } else {
+          // Parámetro detectado: Olvidó checar salida (No se contabiliza al no tener par ordenado)
+          continue;
+        }
+      }
+    }
+  }
+
+  // Calcular KPI de tiempo promedio real por turno
+  const avgHours = totalValidShifts > 0 ? (totalAggregatedHours / totalValidShifts) : 0;
+  $('kpi-avg-time').textContent = avgHours.toFixed(1) + 'h';
+
+  // Renderizar Gráfica SVG Dinámica
+  renderSVGChart(daysMap);
+}
+
+function renderSVGChart(daysMap) {
+  const chart = $('analytics-chart');
+  chart.innerHTML = ''; // Limpiar lienzo
+
+  const keys = Object.keys(daysMap).sort();
+  if(!keys.length) return;
+
+  const maxHours = Math.max(...keys.map(k => daysMap[k].totalHours), 8); // Escalado dinámico base de 8 horas
+  const padding = 30;
+  const chartHeight = 110;
+  const chartWidth = 360;
+  const barWidth = Math.max(12, (chartWidth / keys.length) - 10);
+  const stepX = chartWidth / keys.length;
+
+  // Renderizar Ejes de Referencia Líneas de Fondo
+  for(let l = 0; l <= 4; l++) {
+    const yVal = padding + (chartHeight / 4) * l;
+    const hourLabel = (maxHours - (maxHours / 4) * l).toFixed(1);
+    
+    chart.innerHTML += `<line x1="${padding}" y1="${yVal}" x2="${padding + chartWidth}" y2="${yVal}" stroke="#26262a" stroke-dasharray="2,2"/>`;
+    chart.innerHTML += `<text x="${padding - 8}" y="${yVal + 3}" fill="var(--ink-faint)" font-size="8" font-family="var(--font-mono)" text-anchor="end">${hourLabel}h</text>`;
+  }
+
+  // Dibujar Barras de Datos por Día Real
+  keys.forEach((key, index) => {
+    const dayData = daysMap[key];
+    const barHeight = (dayData.totalHours / maxHours) * chartHeight;
+    const x = padding + (stepX * index) + (stepX - barWidth) / 2;
+    const y = padding + chartHeight - barHeight;
+
+    // Formatear etiqueta de fecha corta para el eje X (MM-DD)
+    const labelDate = key.substring(5);
+
+    // Renderizar barra
+    chart.innerHTML += `
+      <rect class="chart-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3" title="${key}: ${dayData.totalHours.toFixed(1)} horas">
+        <title>Fecha: ${key}\nHoras Totales: ${dayData.totalHours.toFixed(1)}h\nTurnos: ${dayData.shiftCount}</title>
+      </rect>
+      <text class="chart-text" x="${x + barWidth/2}" y="${padding + chartHeight + 14}">${labelDate}</text>
+    `;
+  });
+
+  // Línea base del eje X
+  chart.innerHTML += `<line x1="${padding}" y1="${padding + chartHeight}" x2="${padding + chartWidth}" y2="${padding + chartHeight}" stroke="var(--carbon-line)"/>`;
+}
+
+/* ---------------- API Bridge ---------------- */
 function callApi(action, extra){
   const body = Object.assign({ action, idToken: session.idToken }, extra || {});
   return fetch(CONFIG.APPS_SCRIPT_URL, {
     method:'POST',
-    headers:{ 'Content-Type':'text/plain;charset=utf-8' }, // evita preflight CORS con Apps Script
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
     body: JSON.stringify(body)
   }).then(r => r.json());
 }
