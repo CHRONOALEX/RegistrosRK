@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Control de Horarios · Redpack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root{
+    --carbon-900:#161618;
+    --carbon-800:#1d1d20;
+    --carbon-700:#26262a;
+    --carbon-600:#333338;
+    --carbon-line:#3a3a40;
+    --ink:#eeece9;
+    --ink-dim:#a8a6ac;
+    --ink-faint:#6f6d74;
+    --guindo:#7c2340;
+    --guindo-light:#a33454;
+    --guindo-glow:rgba(163,52,84,.35);
+    --ok:#4f9c72;
+    --ok-glow:rgba(79,156,114,.25);
+    --warn:#c98a3b;
+    --err:#b6394a;
+    --radius:16px;
+    --radius-sm:10px;
+    --font-display:'Manrope',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #232327 0%, var(--carbon-900) 60%),
+      var(--carbon-900);
+    color:var(--ink);
+    font-family:var(--font-body);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:28px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{width:100%;max-width:440px;}
+
+  /* ---------- Header ---------- */
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding:0 2px;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;flex:none;
+    background:linear-gradient(150deg,var(--guindo-light),var(--guindo) 70%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 18px var(--guindo-glow);
+  }
+  .brand-mark svg{width:19px;height:19px;}
+  .brand-text .t1{font-family:var(--font-display);font-weight:800;font-size:15.5px;letter-spacing:.2px;line-height:1.15;}
+  .brand-text .t2{font-size:11.5px;color:var(--ink-faint);font-family:var(--font-mono);letter-spacing:.3px;}
+
+  /* ---------- Card ---------- */
+  .card{
+    background:linear-gradient(180deg,var(--carbon-800),var(--carbon-700));
+    border:1px solid var(--carbon-line);
+    border-radius:var(--radius);
+    padding:26px 22px;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.6);
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- Login screen ---------- */
+  #screen-login .headline{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.25;margin:6px 0 8px;}
+  #screen-login .sub{color:var(--ink-dim);font-size:14px;line-height:1.55;margin-bottom:26px;}
+  .g-wrap{display:flex;justify-content:center;margin-bottom:14px;min-height:44px;}
+  .login-hint{font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.5;}
+  .login-status{font-size:13px;text-align:center;margin-top:14px;color:var(--warn);min-height:18px;}
+
+  /* ---------- Onboarding ---------- */
+  #screen-onboard .headline{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
+  #screen-onboard .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:18px;}
+  label{display:block;font-size:12px;color:var(--ink-faint);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+  input[type=text]{
+    width:100%;padding:13px 14px;border-radius:var(--radius-sm);
+    border:1px solid var(--carbon-line);background:var(--carbon-900);
+    color:var(--ink);font-size:15px;font-family:var(--font-body);outline:none;
+  }
+  input[type=text]:focus{border-color:var(--guindo-light);box-shadow:0 0 0 3px rgba(163,52,84,.18);}
+  .email-pill{
+    display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--radius-sm);
+    background:var(--carbon-900);border:1px solid var(--carbon-line);margin-bottom:18px;
+  }
+  .email-pill img{width:26px;height:26px;border-radius:50%;}
+  .email-pill span{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);word-break:break-all;}
+  .btn{
+    width:100%;padding:14px;border-radius:var(--radius-sm);border:none;
+    font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:.2px;
+    cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -10px var(--guindo-glow);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--carbon-line);margin-top:10px;}
+
+  /* ---------- Main screen ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .who{display:flex;align-items:center;gap:10px;}
+  .who img{width:34px;height:34px;border-radius:50%;border:1px solid var(--carbon-line);}
+  .who .name{font-weight:700;font-size:14px;font-family:var(--font-display);}
+  .who .role{font-size:10.5px;color:var(--guindo-light);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:9px;border:1px solid var(--carbon-line);
+    background:var(--carbon-900);color:var(--ink-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .clock{font-family:var(--font-mono);font-size:34px;font-weight:600;text-align:center;margin:6px 0 2px;letter-spacing:1px;}
+  .date{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-bottom:22px;text-transform:capitalize;}
+
+  /* Radar / geofence signature element */
+  .radar-wrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 22px;}
+  .radar{position:relative;width:168px;height:168px;}
+  .radar-ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--carbon-line);}
+  .radar-ring.r2{inset:16px;}
+  .radar-ring.r3{inset:32px;}
+  .radar-fill{
+    position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0deg, var(--guindo-glow) 70deg, transparent 140deg);
+    animation:spin 3.4s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .radar-core{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:88px;height:88px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--carbon-600), var(--carbon-800) 75%);
+    border:1px solid var(--carbon-line);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+  }
+  .radar-core .dist{font-family:var(--font-mono);font-weight:700;font-size:17px;}
+  .radar-core .lbl{font-size:9px;color:var(--ink-faint);letter-spacing:.5px;text-transform:uppercase;margin-top:2px;}
+  .radar-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--ink-faint);left:50%;top:50%;transform:translate(-50%,-50%);transition:all .4s ease;box-shadow:0 0 0 4px rgba(0,0,0,.25);}
+  .radar-dot.ok{background:var(--ok);box-shadow:0 0 0 6px var(--ok-glow);}
+  .radar-dot.bad{background:var(--err);box-shadow:0 0 0 6px rgba(182,57,74,.28);}
+  .geo-status{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:12px;min-height:16px;font-family:var(--font-mono);}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+  .btn-in{background:linear-gradient(135deg,#5fae7f,var(--ok));color:#0d1b12;box-shadow:0 10px 26px -12px var(--ok-glow);}
+  .btn-out{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -12px var(--guindo-glow);}
+  .btn-icon{font-size:17px;display:block;margin-bottom:2px;}
+
+  .feed{margin-top:22px;}
+  .feed h3{font-family:var(--font-display);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;}
+  .feed-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:11px 0;border-top:1px solid var(--carbon-line);font-size:13px;
+  }
+  .feed-item:first-child{border-top:none;}
+  .feed-item .fi-left{display:flex;align-items:center;gap:9px;}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .dot.ok{background:var(--ok);}
+  .dot.bad{background:var(--err);}
+  .fi-time{font-family:var(--font-mono);color:var(--ink-faint);font-size:11.5px;}
+  .empty{color:var(--ink-faint);font-size:13px;text-align:center;padding:14px 0;}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+    background:var(--carbon-700);border:1px solid var(--carbon-line);
+    padding:12px 18px;border-radius:12px;font-size:13.5px;max-width:90vw;text-align:center;
+    box-shadow:0 14px 40px -12px rgba(0,0,0,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+  .toast.ok{border-color:var(--ok);}
+  .toast.bad{border-color:var(--err);}
+
+  /* ---------- Admin ---------- */
+  #screen-admin .headline{font-family:var(--font-display);font-weight:800;font-size:18px;margin:0 0 16px;display:flex;align-items:center;justify-content:space-between;}
+  .filters{display:flex;gap:8px;margin-bottom:16px;}
+  .filters input{flex:1;font-size:13px;padding:10px 12px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{text-align:left;color:var(--ink-faint);font-weight:600;text-transform:uppercase;font-size:9.5px;letter-spacing:.4px;padding:0 6px 8px;}
+  td{padding:9px 6px;border-top:1px solid var(--carbon-line);font-family:var(--font-mono);}
+  td.res-ok{color:var(--ok);}
+  td.res-bad{color:var(--err);}
+  .table-wrap{max-height:420px;overflow:auto;margin:-4px -4px 0;}
+  .back-link{display:flex;align-items:center;gap:6px;color:var(--ink-dim);font-size:13px;margin-bottom:16px;cursor:pointer;}
+
+  .foot-note{font-size:10.5px;color:var(--ink-faint);text-align:center;margin-top:18px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 12.3l2.4 2.4 4.8-4.9" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="brand-text">
+      <div class="t1">Control de Horarios</div>
+      <div class="t2">REDPACK · ENTRADA / SALIDA</div>
+    </div>
+  </div>
+
+  <!-- ===================== LOGIN ===================== -->
+  <div id="screen-login" class="card">
+    <div class="headline">Registra tu asistencia</div>
+    <div class="sub">Inicia sesión con tu cuenta de Gmail para checar tu entrada o salida de turno. Tu correo queda validado automáticamente, no se puede escribir a mano.</div>
+    <div class="g-wrap"><div id="gsi-button"></div></div>
+    <div class="login-hint">Solo correos previamente autorizados por un administrador podrán checar.</div>
+    <div id="login-status" class="login-status"></div>
+  </div>
+
+  <!-- ===================== ONBOARDING (nombre) ===================== -->
+  <div id="screen-onboard" class="card hidden">
+    <div class="headline">Confirma tu nombre</div>
+    <div class="sub">Este nombre es el que verán los administradores en los registros. Tu Gmail ya quedó verificado.</div>
+    <div class="email-pill"><img id="ob-avatar" src="" alt=""><span id="ob-email"></span></div>
+    <label for="ob-name">Nombre completo</label>
+    <input type="text" id="ob-name" placeholder="Ej. Juan Pérez">
+    <button class="btn btn-primary" id="ob-continue" style="margin-top:16px;">Continuar</button>
+    <button class="btn btn-ghost" id="ob-logout">Cerrar sesión</button>
+  </div>
+
+  <!-- ===================== MAIN ===================== -->
+  <div id="screen-main" class="card hidden">
+    <div class="topbar">
+      <div class="who">
+        <img id="m-avatar" src="" alt="">
+        <div>
+          <div class="name" id="m-name">—</div>
+          <div class="role" id="m-role"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="icon-btn hidden" id="btn-admin" title="Panel de administrador">⚙</div>
+        <div class="icon-btn" id="btn-logout" title="Cerrar sesión">⏻</div>
+      </div>
+    </div>
+
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="date" id="date-label">—</div>
+
+    <div class="radar-wrap">
+      <div class="radar">
+        <div class="radar-fill"></div>
+        <div class="radar-ring"></div>
+        <div class="radar-ring r2"></div>
+        <div class="radar-ring r3"></div>
+        <div class="radar-dot" id="radar-dot"></div>
+        <div class="radar-core">
+          <div class="dist" id="radar-dist">—</div>
+          <div class="lbl">del punto</div>
+        </div>
+      </div>
+      <div class="geo-status" id="geo-status">Ubicando…</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-in" id="btn-entrada" disabled>
+        <span class="btn-icon">↗</span>Marcar entrada
+      </button>
+      <button class="btn btn-out" id="btn-salida" disabled>
+        <span class="btn-icon">↘</span>Marcar salida
+      </button>
+    </div>
+
+    <div class="feed">
+      <h3>Tus últimos checks</h3>
+      <div id="feed-list"><div class="empty">Aún no tienes registros hoy.</div></div>
+    </div>
+
+    <div class="foot-note">La ubicación se valida en el servidor al momento de checar. Los intentos fuera del radio permitido o con GPS poco confiable quedan marcados como rechazados.</div>
+  </div>
+
+  <!-- ===================== ADMIN ===================== -->
+  <div id="screen-admin" class="card hidden">
+    <div class="back-link" id="admin-back">← Volver</div>
+    <div class="headline">Registros<span id="admin-count" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);"></span></div>
+    <div class="filters">
+      <input type="text" id="admin-search" placeholder="Buscar por nombre o correo…">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Hora</th><th>Dist.</th><th>Resultado</th></tr></thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN — edita estos 2 valores antes de publicar la app
+   ===================================================================== */
+const CONFIG = {
+  GOOGLE_CLIENT_ID: "972622378238-r9c9jse3rp3c3isf68dq8u08gv5c3u7s.apps.googleusercontent.com",
+  APPS_SCRIPT_URL:  "PON_AQUI_LA_URL_DE_TU_WEB_APP_DE_APPS_SCRIPT",
+  TARGET_LAT: 25.685556,
+  TARGET_LNG: -100.262067,
+  RADIUS_M: 50,
+  MAX_ACCURACY_M: 60
+};
+/* ===================================================================== */
+
+let session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
+let lastFix = null;
+let currentFix = null;
+let watchId = null;
+let todayFeed = [];
+
+const $ = (id) => document.getElementById(id);
+const show = (id) => { ['screen-login','screen-onboard','screen-main','screen-admin'].forEach(s=>$(s).classList.add('hidden')); $(id).classList.remove('hidden'); };
+function toast(msg, kind){
+  const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + (kind||'');
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+/* ---------------- Google Identity Services ---------------- */
+window.onload = () => {
+  google.accounts.id.initialize({
+    client_id: CONFIG.GOOGLE_CLIENT_ID,
+    callback: onGoogleCredential,
+    auto_select: false
+  });
+  google.accounts.id.renderButton($('gsi-button'), { theme:'filled_black', size:'large', shape:'pill', text:'signin_with', width:280 });
+  tickClock();
+  setInterval(tickClock, 1000);
+};
+
+function decodeJwt(token){
+  try { return JSON.parse(decodeURIComponent(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }
+  catch(e){ return null; }
+}
+
+function onGoogleCredential(resp){
+  const payload = decodeJwt(resp.credential);
+  if (!payload || !payload.email){ $('login-status').textContent = 'No se pudo leer tu cuenta de Google.'; return; }
+  session.idToken = resp.credential;
+  session.email = payload.email.toLowerCase();
+  session.name = payload.name || '';
+  session.picture = payload.picture || '';
+  $('login-status').textContent = 'Verificando…';
+
+  // El servidor vuelve a verificar el token y decide si el usuario existe / está activo / es admin
+  callApi('login', { nombre: session.name }).then(res=>{
+    if (!res.ok){ toast(res.error || 'No se pudo iniciar sesión.', 'bad'); $('login-status').textContent = res.error || ''; return; }
+    session.rol = res.rol;
+    session.name = res.nombre || session.name;
+    $('ob-avatar').src = session.picture;
+    $('ob-email').textContent = session.email;
+    $('ob-name').value = session.name;
+    show('screen-onboard');
+  }).catch(()=> $('login-status').textContent = 'No se pudo conectar con el servidor.');
+}
+
+$('ob-continue').onclick = () => {
+  const nombre = $('ob-name').value.trim();
+  if (!nombre){ toast('Escribe tu nombre.', 'bad'); return; }
+  session.name = nombre;
+  callApi('login', { nombre }).then(res=>{
+    if(!res.ok){ toast(res.error||'Error al guardar.', 'bad'); return; }
+    enterMain();
+  });
+};
+$('ob-logout').onclick = doLogout;
+$('btn-logout').onclick = doLogout;
+function doLogout(){
+  google.accounts.id.disableAutoSelect();
+  if (watchId) navigator.geolocation.clearWatch(watchId);
+  session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
+  show('screen-login');
+}
+
+/* ---------------- Pantalla principal ---------------- */
+function enterMain(){
+  $('m-avatar').src = session.picture;
+  $('m-name').textContent = session.name;
+  $('m-role').textContent = session.rol === 'admin' ? 'Administrador' : 'Colaborador';
+  $('btn-admin').classList.toggle('hidden', session.rol !== 'admin');
+  show('screen-main');
+  startGeo();
+}
+
+$('btn-admin').onclick = openAdmin;
+$('admin-back').onclick = () => show('screen-main');
+
+function tickClock(){
+  const d = new Date();
+  $('clock').textContent = d.toLocaleTimeString('es-MX', {hour12:false});
+  $('date-label').textContent = d.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
+}
+
+/* ---------------- Geolocalización + geocerca ---------------- */
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371000, toRad = d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function startGeo(){
+  if (!navigator.geolocation){ $('geo-status').textContent = 'Tu navegador no soporta ubicación.'; return; }
+  watchId = navigator.geolocation.watchPosition(onGeo, onGeoError, { enableHighAccuracy:true, maximumAge:0, timeout:15000 });
+}
+
+function onGeoError(err){
+  $('geo-status').textContent = 'No se pudo obtener tu ubicación. Revisa permisos de GPS.';
+  $('btn-entrada').disabled = true; $('btn-salida').disabled = true;
+  setDot('bad');
+}
+
+function onGeo(pos){
+  const c = pos.coords;
+  const fix = { lat:c.latitude, lng:c.longitude, accuracy:c.accuracy, t:Date.now() };
+
+  // Heurística anti "salto de ubicación" (fake GPS / teleport)
+  let sospechoso = null;
+  if (lastFix){
+    const dt = (fix.t - lastFix.t)/1000;
+    const dd = haversine(lastFix.lat, lastFix.lng, fix.lat, fix.lng);
+    if (dt > 0.4 && dt < 20){
+      const speed = dd/dt; // m/s
+      if (speed > 55) sospechoso = 'salto de ubicación implausible';
+    }
+  }
+  lastFix = fix;
+  currentFix = fix;
+  if (fix.accuracy && fix.accuracy > CONFIG.MAX_ACCURACY_M) sospechoso = sospechoso || 'precisión GPS insuficiente';
+  currentFix.sospechoso = sospechoso;
+
+  const dist = haversine(fix.lat, fix.lng, CONFIG.TARGET_LAT, CONFIG.TARGET_LNG);
+  currentFix.distancia = dist;
+
+  $('radar-dist').textContent = Math.round(dist) + ' m';
+  const dentro = dist <= CONFIG.RADIUS_M && !sospechoso;
+  setDot(dentro ? 'ok' : 'bad');
+
+  if (sospechoso){
+    $('geo-status').textContent = '⚠ ' + (sospechoso === 'precisión GPS insuficiente' ? 'Precisión GPS baja, espera unos segundos.' : 'Ubicación sospechosa detectada.');
+  } else if (dentro){
+    $('geo-status').textContent = 'Dentro del rango permitido · ±' + Math.round(fix.accuracy) + 'm';
+  } else {
+    $('geo-status').textContent = 'Fuera del rango permitido (' + CONFIG.RADIUS_M + 'm) · ±' + Math.round(fix.accuracy) + 'm';
+  }
+
+  $('btn-entrada').disabled = false;
+  $('btn-salida').disabled = false;
+}
+
+function setDot(state){
+  const dot = $('radar-dot');
+  dot.className = 'radar-dot ' + (state==='ok'?'ok':state==='bad'?'bad':'');
+}
+
+/* ---------------- Marcar entrada / salida ---------------- */
+$('btn-entrada').onclick = () => marcar('Entrada');
+$('btn-salida').onclick = () => marcar('Salida');
+
+function marcar(tipo){
+  if (!currentFix){ toast('Esperando ubicación…', 'bad'); return; }
+  $('btn-entrada').disabled = true; $('btn-salida').disabled = true;
+
+  callApi('registrar', {
+    tipo, nombre: session.name,
+    lat: currentFix.lat, lng: currentFix.lng, accuracy: currentFix.accuracy,
+    sospechoso: currentFix.sospechoso || '',
+    dispositivo: navigator.userAgent
+  }).then(res=>{
+    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
+    if (res.ok){
+      toast(tipo + ' registrada · ' + res.distancia + 'm del punto', 'ok');
+    } else {
+      toast(res.motivo || res.error || 'Registro rechazado', 'bad');
+    }
+    addFeedItem(tipo, res.ok, res.motivo);
+  }).catch(()=>{
+    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
+    toast('No se pudo conectar con el servidor.', 'bad');
+  });
+}
+
+function addFeedItem(tipo, ok, motivo){
+  todayFeed.unshift({ tipo, ok, motivo, time: new Date().toLocaleTimeString('es-MX',{hour12:false}) });
+  const list = $('feed-list');
+  list.innerHTML = todayFeed.slice(0,8).map(f => `
+    <div class="feed-item">
+      <div class="fi-left">
+        <span class="dot ${f.ok?'ok':'bad'}"></span>
+        <span>${f.tipo} ${f.ok ? '' : '· rechazada'}</span>
+      </div>
+      <span class="fi-time">${f.time}</span>
+    </div>`).join('');
+}
+
+/* ---------------- Panel admin ---------------- */
+function openAdmin(){
+  show('screen-admin');
+  $('admin-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Cargando…</td></tr>';
+  callApi('listado', {}).then(res=>{
+    if (!res.ok){ toast(res.error||'Sin permisos', 'bad'); show('screen-main'); return; }
+    renderAdminTable(res.registros || []);
+  });
+}
+let adminRows = [];
+function renderAdminTable(rows){
+  adminRows = rows;
+  $('admin-count').textContent = ' · ' + rows.length;
+  paintAdminTable(rows);
+}
+function paintAdminTable(rows){
+  $('admin-tbody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.Nombre || ''}</td>
+      <td>${r.Tipo || ''}</td>
+      <td>${new Date(r.Timestamp).toLocaleTimeString('es-MX',{hour12:false})}</td>
+      <td>${r.Distancia_m || ''}m</td>
+      <td class="${r.Resultado==='Aceptado'?'res-ok':'res-bad'}">${r.Resultado || ''}</td>
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sin registros</td></tr>';
+}
+$('admin-search').oninput = (e) => {
+  const q = e.target.value.toLowerCase();
+  paintAdminTable(adminRows.filter(r => (r.Nombre||'').toLowerCase().includes(q) || (r.Correo||'').toLowerCase().includes(q)));
+};
+
+/* ---------------- Comunicación con Apps Script ---------------- */
+function callApi(action, extra){
+  const body = Object.assign({ action, idToken: session.idToken }, extra || {});
+  return fetch(CONFIG.APPS_SCRIPT_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' }, // evita preflight CORS con Apps Script
+    body: JSON.stringify(body)
+  }).then(r => r.json());
+}
+</script>
+</body>
+</html>
