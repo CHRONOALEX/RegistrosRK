@@ -119,11 +119,11 @@
   .date{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-bottom:22px;text-transform:capitalize;}
 
   /* Radar / geofence signature element */
-  .radar-wrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 22px;}
-  .radar{position:relative;width:168px;height:168px;}
+  .radar-wrap{display:flex;flex-direction:column;align-items:center;margin:4px 0 16px;}
+  .radar{position:relative;width:126px;height:126px;}
   .radar-ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--carbon-line);}
-  .radar-ring.r2{inset:16px;}
-  .radar-ring.r3{inset:32px;}
+  .radar-ring.r2{inset:12px;}
+  .radar-ring.r3{inset:24px;}
   .radar-fill{
     position:absolute;inset:0;border-radius:50%;
     background:conic-gradient(from 0deg, transparent 0deg, var(--guindo-glow) 70deg, transparent 140deg);
@@ -132,26 +132,27 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   .radar-core{
     position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-    width:88px;height:88px;border-radius:50%;
+    width:66px;height:66px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%, var(--carbon-600), var(--carbon-800) 75%);
     border:1px solid var(--carbon-line);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;
   }
-  .radar-core .dist{font-family:var(--font-mono);font-weight:700;font-size:17px;}
-  .radar-core .lbl{font-size:9px;color:var(--ink-faint);letter-spacing:.5px;text-transform:uppercase;margin-top:2px;}
+  .radar-core .dist{font-family:var(--font-mono);font-weight:700;font-size:13px;}
+  .radar-core .lbl{font-size:7.5px;color:var(--ink-faint);letter-spacing:.4px;text-transform:uppercase;margin-top:1px;}
   .radar-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--ink-faint);left:50%;top:50%;transform:translate(-50%,-50%);transition:all .4s ease;box-shadow:0 0 0 4px rgba(0,0,0,.25);}
   .radar-dot.ok{background:var(--ok);box-shadow:0 0 0 6px var(--ok-glow);}
   .radar-dot.bad{background:var(--err);box-shadow:0 0 0 6px rgba(182,57,74,.28);}
   .geo-status{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:12px;min-height:16px;font-family:var(--font-mono);}
 
   .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+  .shift-status{text-align:center;font-size:11.5px;color:var(--ink-faint);margin-top:9px;min-height:14px;}
   .btn-in{background:linear-gradient(135deg,#5fae7f,var(--ok));color:#0d1b12;box-shadow:0 10px 26px -12px var(--ok-glow);}
   .btn-out{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -12px var(--guindo-glow);}
   .btn-icon{font-size:17px;display:block;margin-bottom:2px;}
 
   .feed{margin-top:22px;}
-  .feed h3{font-family:var(--font-display);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;}
+  .feed h3{font-family:var(--font-display);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
   .feed-item{
     display:flex;align-items:center;justify-content:space-between;
     padding:11px 0;border-top:1px solid var(--carbon-line);font-size:13px;
@@ -163,6 +164,37 @@
   .dot.bad{background:var(--err);}
   .fi-time{font-family:var(--font-mono);color:var(--ink-faint);font-size:11.5px;}
   .empty{color:var(--ink-faint);font-size:13px;text-align:center;padding:14px 0;}
+
+  /* ---------- Historial inteligente 7 días (entrada/salida) ---------- */
+  .hist-refresh{cursor:pointer;color:var(--ink-faint);font-family:var(--font-mono);font-size:10px;letter-spacing:0;text-transform:none;display:flex;align-items:center;gap:4px;}
+  .hist-refresh:active{opacity:.6;}
+  .hist-head{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 2px 6px;}
+  .hist-head span{font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+  .hist-list{display:flex;flex-direction:column;gap:8px;}
+  .hist-row{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+    background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);
+    padding:10px 12px;position:relative;
+  }
+  .hist-row.open{border-color:rgba(79,156,114,.4);}
+  .hist-daytag{
+    font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);
+    margin-bottom:4px;letter-spacing:.3px;
+  }
+  .hist-col{display:flex;flex-direction:column;gap:2px;}
+  .hist-col .hc-top{display:flex;align-items:center;gap:5px;}
+  .hist-col .hc-icon{font-size:11px;line-height:1;}
+  .hist-col.in .hc-icon{color:var(--ok);}
+  .hist-col.out .hc-icon{color:var(--guindo-light);}
+  .hist-col .hc-time{font-family:var(--font-mono);font-weight:700;font-size:14px;}
+  .hist-col .hc-date{font-size:10px;color:var(--ink-faint);}
+  .hist-col .hc-empty{font-family:var(--font-mono);font-size:13px;color:var(--ink-faint);}
+  .hist-dur{
+    grid-column:1 / -1;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);
+    border-top:1px dashed var(--carbon-line);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;
+  }
+  .hist-dur .badge-open{color:var(--ok);font-weight:700;}
+  .hist-loading{color:var(--ink-faint);font-size:12.5px;text-align:center;padding:16px 0;font-family:var(--font-mono);}
 
   .toast{
     position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
@@ -298,10 +330,12 @@
         <span class="btn-icon">↘</span>Marcar salida
       </button>
     </div>
+    <div class="shift-status" id="shift-status"></div>
 
     <div class="feed">
-      <h3>Tus últimos checks</h3>
-      <div id="feed-list"><div class="empty">Aún no tienes registros hoy.</div></div>
+      <h3>Tus checadas · últimos 7 días <span class="hist-refresh" id="hist-refresh">⟳ actualizar</span></h3>
+      <div class="hist-head"><span>Entrada</span><span>Salida</span></div>
+      <div id="feed-list"><div class="hist-loading">Cargando historial…</div></div>
     </div>
 
     <div class="foot-note">La ubicación se valida en el servidor. Los intentos fuera del radio permitido o repetidos antes de 1 hora serán bloqueados automáticamente.</div>
@@ -380,18 +414,25 @@
 <script>
 const CONFIG = {
   GOOGLE_CLIENT_ID: "972622378238-r9c9jse3rp3c3isf68dq8u08gv5c3u7s.apps.googleusercontent.com",
-  APPS_SCRIPT_URL:  "https://script.google.com/macros/s/AKfycbyFjx58qXb6HriT7GImA7yuSn8eqjDpk4Dcw83EFM4dfMY0AyncaRreK6psrOIy-gSt/exec",
+  APPS_SCRIPT_URL:  "https://script.google.com/macros/s/AKfycbzsqw7GRlRCj4mH8c6ruZjUfJo-LkNovwXvj7orGXHZFL-CDuWG07w4h-iR_BOvijBbPQ/exec",
   TARGET_LAT: 25.68614677355663, 
   TARGET_LNG: -100.26226455117553,
   RADIUS_M: 90,
   MAX_ACCURACY_M: 200
 };
 
+const SESSION_KEY = 'redpack_session_v1';
+const SESSION_TTL_MS = 10 * 60 * 60 * 1000; // 10 horas
+
 let session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
 let lastFix = null;
 let currentFix = null;
 let watchId = null;
-let todayFeed = [];
+let autoLogoutTimer = null;
+let historyRows = [];
+let historyLoaded = false;
+let geoReady = false;
+let nextExpectedType = null; // 'Entrada' o 'Salida' — se calcula tras cargar el historial
 let adminRows = []; 
 let selectedUsersForChart = new Set(); 
 
@@ -412,6 +453,39 @@ function toast(msg, kind){
   clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
+/* ---------------- Persistencia de sesión (10 horas) ---------------- */
+function saveSession(){
+  const record = Object.assign({}, session, { expiresAt: Date.now() + SESSION_TTL_MS });
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(record)); } catch(e){}
+  scheduleAutoLogout(SESSION_TTL_MS);
+}
+
+function loadSession(){
+  let raw;
+  try { raw = localStorage.getItem(SESSION_KEY); } catch(e){ return null; }
+  if (!raw) return null;
+  let data;
+  try { data = JSON.parse(raw); } catch(e){ return null; }
+  if (!data || !data.expiresAt || Date.now() >= data.expiresAt || !data.idToken || !data.email){
+    try { localStorage.removeItem(SESSION_KEY); } catch(e){}
+    return null;
+  }
+  return data;
+}
+
+function clearSession(){
+  try { localStorage.removeItem(SESSION_KEY); } catch(e){}
+  if (autoLogoutTimer) { clearTimeout(autoLogoutTimer); autoLogoutTimer = null; }
+}
+
+function scheduleAutoLogout(msFromNow){
+  if (autoLogoutTimer) clearTimeout(autoLogoutTimer);
+  autoLogoutTimer = setTimeout(() => {
+    toast('Tu sesión expiró tras 10 horas, inicia sesión de nuevo.', 'bad');
+    doLogout();
+  }, msFromNow);
+}
+
 /* ---------------- Reloj Operativo ---------------- */
 window.onload = () => {
   google.accounts.id.initialize({
@@ -423,6 +497,14 @@ window.onload = () => {
   tickClock();
   setInterval(tickClock, 1000);
   initAdminDateRange();
+
+  // Restaurar sesión activa (evita re-login y evita que el historial "desaparezca" al volver)
+  const saved = loadSession();
+  if (saved){
+    session = { idToken:saved.idToken, email:saved.email, name:saved.name, picture:saved.picture, rol:saved.rol || 'empleado' };
+    scheduleAutoLogout(saved.expiresAt - Date.now());
+    enterMain();
+  }
 };
 
 function decodeJwt(token){
@@ -456,6 +538,8 @@ $('ob-continue').onclick = () => {
   session.name = nombre;
   callApi('login', { nombre }).then(res=>{
     if(!res.ok){ toast(res.error||'Error al guardar.', 'bad'); return; }
+    session.rol = res.rol || session.rol;
+    saveSession();
     enterMain();
   });
 };
@@ -465,6 +549,8 @@ $('btn-logout').onclick = doLogout;
 function doLogout(){
   google.accounts.id.disableAutoSelect();
   if (watchId) navigator.geolocation.clearWatch(watchId);
+  clearSession();
+  historyRows = [];
   session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
   show('screen-login');
 }
@@ -476,6 +562,7 @@ function enterMain(){
   $('btn-admin').classList.toggle('hidden', session.rol !== 'admin');
   show('screen-main');
   startGeo();
+  fetchHistorial();
 }
 
 $('btn-admin').onclick = openAdmin;
@@ -502,7 +589,8 @@ function startGeo(){
 
 function onGeoError(err){
   $('geo-status').textContent = 'No se pudo obtener tu ubicación. Revisa permisos de GPS.';
-  $('btn-entrada').disabled = true; $('btn-salida').disabled = true;
+  geoReady = false;
+  refreshActionButtons();
   setDot('bad');
 }
 
@@ -539,8 +627,38 @@ function onGeo(pos){
     $('geo-status').textContent = 'Fuera del rango permitido (' + CONFIG.RADIUS_M + 'm) · ±' + Math.round(fix.accuracy) + 'm';
   }
 
-  $('btn-entrada').disabled = false;
-  $('btn-salida').disabled = false;
+  geoReady = true;
+  refreshActionButtons();
+}
+
+// Decide qué botón debe estar habilitado: solo se puede marcar Entrada si el último
+// check aceptado fue una Salida (o no hay historial), y solo se puede marcar Salida
+// si el último check aceptado fue una Entrada. Nunca dos Salidas ni dos Entradas seguidas.
+function refreshActionButtons(){
+  const entradaBtn = $('btn-entrada'), salidaBtn = $('btn-salida'), status = $('shift-status');
+  if (!geoReady || !historyLoaded){
+    entradaBtn.disabled = true;
+    salidaBtn.disabled = true;
+    if (status) status.textContent = !historyLoaded ? 'Verificando tu último check…' : '';
+    return;
+  }
+  if (nextExpectedType === 'Salida'){
+    entradaBtn.disabled = true;
+    salidaBtn.disabled = false;
+    if (status) status.textContent = 'Tienes una entrada activa · te toca marcar salida';
+  } else {
+    // nextExpectedType === 'Entrada' (incluye el caso sin historial previo)
+    entradaBtn.disabled = false;
+    salidaBtn.disabled = true;
+    if (status) status.textContent = '';
+  }
+}
+
+function computeNextExpected(){
+  if (!historyRows.length) return 'Entrada'; // nunca ha checado: su primer registro debe ser Entrada
+  const sorted = [...historyRows].sort((a,b)=> new Date(a.Timestamp) - new Date(b.Timestamp));
+  const last = sorted[sorted.length - 1];
+  return last.Tipo === 'Entrada' ? 'Salida' : 'Entrada';
 }
 
 function setDot(state){
@@ -562,8 +680,14 @@ function checkLockout(tipo) {
   return false;
 }
 
-$('btn-entrada').onclick = () => { if(!checkLockout('Entrada')) marcar('Entrada'); };
-$('btn-salida').onclick = () => { if(!checkLockout('Salida')) marcar('Salida'); };
+$('btn-entrada').onclick = () => {
+  if (nextExpectedType === 'Salida'){ toast('Ya tienes una entrada activa. Debes marcar tu salida primero.', 'bad'); return; }
+  if(!checkLockout('Entrada')) marcar('Entrada');
+};
+$('btn-salida').onclick = () => {
+  if (nextExpectedType !== 'Salida'){ toast('Debes marcar tu entrada antes de poder registrar una salida.', 'bad'); return; }
+  if(!checkLockout('Salida')) marcar('Salida');
+};
 
 function marcar(tipo){
   if (!currentFix){ toast('Esperando ubicación…', 'bad'); return; }
@@ -575,31 +699,112 @@ function marcar(tipo){
     sospechoso: currentFix.sospechoso || '',
     dispositivo: navigator.userAgent
   }).then(res=>{
-    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
     if (res.ok){
       toast(tipo + ' registrada con éxito · ' + res.distancia + 'm del punto', 'ok');
       localStorage.setItem(`last_success_check_${session.email}`, Date.now().toString());
+      fetchHistorial(); // refresca desde Sheets y recalcula qué botón debe habilitarse
     } else {
       toast(res.motivo || res.error || 'Registro rechazado', 'bad');
+      refreshActionButtons();
     }
-    addFeedItem(tipo, res.ok, res.motivo);
   }).catch(()=>{
-    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
     toast('No se pudo conectar con el servidor.', 'bad');
+    refreshActionButtons();
   });
 }
 
-function addFeedItem(tipo, ok, motivo){
-  todayFeed.unshift({ tipo, ok, motivo, time: new Date().toLocaleTimeString('es-MX',{hour12:false}) });
+/* ---------------- Historial inteligente de checadas (últimos 7 días) ---------------- */
+$('hist-refresh').onclick = () => fetchHistorial();
+
+function fetchHistorial(){
   const list = $('feed-list');
-  list.innerHTML = todayFeed.slice(0,8).map(f => `
-    <div class="feed-item">
-      <div class="fi-left">
-        <span class="dot ${f.ok?'ok':'bad'}"></span>
-        <span>${f.tipo} ${f.ok ? '' : '· rechazada'}</span>
-      </div>
-      <span class="fi-time">${f.time}</span>
-    </div>`).join('');
+  list.innerHTML = '<div class="hist-loading">Cargando historial…</div>';
+  historyLoaded = false;
+  refreshActionButtons(); // mientras se recarga, ningún botón queda habilitado por error
+  callApi('historial', { dias: 7 }).then(res=>{
+    if (!res.ok){
+      list.innerHTML = '<div class="empty">No se pudo cargar tu historial.</div>';
+      toast('No se pudo verificar tu último check. Actualiza para poder marcar.', 'bad');
+      return;
+    }
+    // Filtro defensivo: solo Aceptados y solo de este usuario, por si el backend regresa de más
+    historyRows = (res.registros || []).filter(r =>
+      r.Resultado === 'Aceptado' && (r.Correo || '').toLowerCase() === session.email
+    );
+    historyLoaded = true;
+    nextExpectedType = computeNextExpected();
+    renderHistorial();
+    refreshActionButtons();
+  }).catch(()=>{
+    list.innerHTML = '<div class="empty">No se pudo conectar con el servidor.</div>';
+    toast('No se pudo verificar tu último check. Actualiza para poder marcar.', 'bad');
+  });
+}
+
+// Empareja Entrada→Salida de forma cronológica, permitiendo turnos que cruzan la medianoche
+// (ej. entra 10/07 7:35pm y sale 11/07 1:30am se muestran como un solo turno).
+function buildShifts(records){
+  const sorted = [...records].sort((a,b)=> new Date(a.Timestamp) - new Date(b.Timestamp));
+  const shifts = [];
+  let openEntrada = null;
+
+  sorted.forEach(r => {
+    if (r.Tipo === 'Entrada'){
+      if (openEntrada) shifts.push({ entrada: openEntrada, salida: null }); // turno anterior quedó sin cerrar
+      openEntrada = r;
+    } else if (r.Tipo === 'Salida'){
+      if (openEntrada){
+        shifts.push({ entrada: openEntrada, salida: r });
+        openEntrada = null;
+      } else {
+        shifts.push({ entrada: null, salida: r }); // salida sin entrada previa registrada
+      }
+    }
+  });
+  if (openEntrada) shifts.push({ entrada: openEntrada, salida: null }); // turno en curso
+
+  return shifts.reverse(); // más reciente arriba
+}
+
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'2-digit' });
+}
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', hour12:true }).toLowerCase();
+}
+
+function renderHistorial(){
+  const list = $('feed-list');
+  const shifts = buildShifts(historyRows);
+
+  if (!shifts.length){ list.innerHTML = '<div class="empty">Aún no tienes registros en los últimos 7 días.</div>'; return; }
+
+  list.innerHTML = shifts.map(s => {
+    const crossesDay = s.entrada && s.salida && fmtDate(s.entrada.Timestamp) !== fmtDate(s.salida.Timestamp);
+    const isOpen = s.entrada && !s.salida;
+
+    const inCol = s.entrada
+      ? `<div class="hist-col in"><div class="hc-top"><span class="hc-icon">↗</span><span class="hc-time">${fmtTime(s.entrada.Timestamp)}</span></div><div class="hc-date">${fmtDate(s.entrada.Timestamp)}</div></div>`
+      : `<div class="hist-col in"><div class="hc-empty">—</div></div>`;
+
+    const outCol = s.salida
+      ? `<div class="hist-col out"><div class="hc-top"><span class="hc-icon">↘</span><span class="hc-time">${fmtTime(s.salida.Timestamp)}</span></div><div class="hc-date">${fmtDate(s.salida.Timestamp)}${crossesDay ? ' · +1 día' : ''}</div></div>`
+      : `<div class="hist-col out"><div class="hc-empty">${isOpen ? 'En curso' : '—'}</div></div>`;
+
+    let durationHTML = '';
+    if (s.entrada && s.salida){
+      const hrs = (new Date(s.salida.Timestamp) - new Date(s.entrada.Timestamp)) / 3600000;
+      if (hrs > 0){
+        durationHTML = `<div class="hist-dur"><span>Duración del turno</span><span>${hrs.toFixed(1)} h</span></div>`;
+      }
+    } else if (isOpen){
+      durationHTML = `<div class="hist-dur"><span class="badge-open">● Turno abierto</span><span>—</span></div>`;
+    }
+
+    return `<div class="hist-row ${isOpen?'open':''}">${inCol}${outCol}${durationHTML}</div>`;
+  }).join('');
 }
 
 /* ---------------- Consola Administrativa Avanzada ---------------- */
